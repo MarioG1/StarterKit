@@ -30,7 +30,7 @@ import name.richardson.james.bukkit.utilities.formatters.DefaultColourFormatter;
 import name.richardson.james.bukkit.utilities.localisation.Localisation;
 import name.richardson.james.bukkit.utilities.localisation.ResourceBundleByClassLocalisation;
 
-import name.richardson.james.bukkit.starterkit.StarterKitConfiguration;
+import name.richardson.james.bukkit.starterkit.StarterKitSave;
 
 public class LoadCommand extends AbstractCommand {
 
@@ -43,15 +43,15 @@ public class LoadCommand extends AbstractCommand {
 	private static final String NO_PERMISSION_KEY = "no-permission";
 	private static final String MUST_SPECIFY_PLAYER = "must-specify-player";
 
-	private final StarterKitConfiguration configuration;
+	private final StarterKitSave kits;
 	private final Server server;
 	private final Localisation localisation = new ResourceBundleByClassLocalisation(LoadCommand.class);
 	private final ColourFormatter colourFormatter = new DefaultColourFormatter();
 
 	private Player player;
 
-	public LoadCommand(final StarterKitConfiguration configuration, Server server) {
-		this.configuration = configuration;
+	public LoadCommand(final StarterKitSave kits, Server server) {
+		this.kits = kits;
 		this.server = server;
 	}
 
@@ -65,8 +65,8 @@ public class LoadCommand extends AbstractCommand {
 	public void execute(CommandContext context) {
 		if (!setPlayer(context)) return;
 		if (!hasPermission(context.getCommandSender())) return;
-		final ItemStack[] inventory = this.configuration.getInventoryKit().getContents();
-		final ItemStack[] armour = this.configuration.getArmourKit().getContents();
+		final ItemStack[] inventory = this.kits.getInventoryKit().getContents();
+		final ItemStack[] armour = this.kits.getArmourKit().getContents();
 		player.getInventory().setContents(inventory);
 		player.getInventory().setArmorContents(armour);
 		player.sendMessage(colourFormatter.format(localisation.getMessage(KIT_LOADED), ColourFormatter.FormatStyle.INFO));

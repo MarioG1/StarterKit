@@ -29,7 +29,7 @@ import name.richardson.james.bukkit.utilities.formatters.DefaultColourFormatter;
 import name.richardson.james.bukkit.utilities.localisation.Localisation;
 import name.richardson.james.bukkit.utilities.localisation.ResourceBundleByClassLocalisation;
 
-import name.richardson.james.bukkit.starterkit.StarterKitConfiguration;
+import name.richardson.james.bukkit.starterkit.StarterKitSave;
 import name.richardson.james.bukkit.starterkit.utilities.formatters.ItemCountChoiceFormatter;
 
 public class ListCommand extends AbstractCommand {
@@ -41,13 +41,13 @@ public class ListCommand extends AbstractCommand {
 	private static final String HEADER_KEY = "header";
 	private static final String NO_PERMISSION_KEY = "no-permission";
 
-	private final StarterKitConfiguration configuration;
+	private final StarterKitSave kits;
 	private final ChoiceFormatter choiceFormatter = new ItemCountChoiceFormatter();
 	private final Localisation localisation = new ResourceBundleByClassLocalisation(ListCommand.class);
 	private final ColourFormatter colourFormatter = new DefaultColourFormatter();
 
-	public ListCommand(final StarterKitConfiguration configuration) {
-		this.configuration = configuration;
+	public ListCommand(final StarterKitSave kits) {
+		this.kits = kits;
 		this.choiceFormatter.setMessage(colourFormatter.format(localisation.getMessage(HEADER_KEY), ColourFormatter.FormatStyle.HEADER));
 	}
 
@@ -60,13 +60,13 @@ public class ListCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext commandContext) {
 		if (isAuthorised(commandContext.getCommandSender())) {
-			this.choiceFormatter.setArguments(configuration.getItemCount());
+			this.choiceFormatter.setArguments(kits.getItemCount());
 			commandContext.getCommandSender().sendMessage(this.choiceFormatter.getMessage());
-			if (this.configuration.getArmourKit().getItemCount() != 0) {
-				commandContext.getCommandSender().sendMessage(ChatColor.YELLOW + localisation.getMessage(ARMOUR_LIST_KEY, this.buildKitList(this.configuration.getArmourKit().getContents())));
+			if (this.kits.getArmourKit().getItemCount() != 0) {
+				commandContext.getCommandSender().sendMessage(ChatColor.YELLOW + localisation.getMessage(ARMOUR_LIST_KEY, this.buildKitList(this.kits.getArmourKit().getContents())));
 			}
-			if (this.configuration.getInventoryKit().getItemCount() != 0) {
-				commandContext.getCommandSender().sendMessage(ChatColor.YELLOW + localisation.getMessage(BACKPACK_LIST_KEY, this.buildKitList(this.configuration.getInventoryKit().getContents())));
+			if (this.kits.getInventoryKit().getItemCount() != 0) {
+				commandContext.getCommandSender().sendMessage(ChatColor.YELLOW + localisation.getMessage(BACKPACK_LIST_KEY, this.buildKitList(this.kits.getInventoryKit().getContents())));
 			}
 		} else {
 			commandContext.getCommandSender().sendMessage(colourFormatter.format(localisation.getMessage(NO_PERMISSION_KEY), ColourFormatter.FormatStyle.ERROR));

@@ -33,6 +33,7 @@ import name.richardson.james.bukkit.utilities.localisation.Localisation;
 import name.richardson.james.bukkit.utilities.localisation.ResourceBundleByClassLocalisation;
 
 import name.richardson.james.bukkit.starterkit.StarterKitConfiguration;
+import name.richardson.james.bukkit.starterkit.StarterKitSave;
 
 public class SaveCommand extends AbstractCommand {
 
@@ -44,14 +45,14 @@ public class SaveCommand extends AbstractCommand {
 	private static final String NO_PERMISSION_KEY = "no-permission";
 
 	private final ColourFormatter colourFormatter = new DefaultColourFormatter();
-	private final StarterKitConfiguration configuration;
+	private final StarterKitSave kits;
 	private final Localisation localisation = new ResourceBundleByClassLocalisation(SaveCommand.class);
 
 	/** The inventory of the player we are using as a template */
 	private PlayerInventory inventory;
 
-	public SaveCommand(final StarterKitConfiguration configuration) {
-		this.configuration = configuration;
+	public SaveCommand(final StarterKitSave kits) {
+		this.kits = kits;
 	}
 
 	/**
@@ -69,7 +70,7 @@ public class SaveCommand extends AbstractCommand {
 				try {
 					final Player player = (Player) commandContext.getCommandSender();
 					this.inventory = player.getInventory();
-					this.configuration.setInventory(this.inventory);
+					this.kits.setInventory(this.inventory);
 					player.sendMessage(colourFormatter.format(localisation.getMessage(KIT_SAVED_KEY), ColourFormatter.FormatStyle.INFO));
 				} catch (final IOException e) {
 					commandContext.getCommandSender().sendMessage(colourFormatter.format(localisation.getMessage(UNABLE_TO_SAVE_KEY), ColourFormatter.FormatStyle.ERROR));

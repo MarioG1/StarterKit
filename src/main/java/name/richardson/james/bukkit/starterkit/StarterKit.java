@@ -46,6 +46,7 @@ public class StarterKit extends JavaPlugin {
 	private static final int PROJECT_ID = 35066;
 
 	private StarterKitConfiguration configuration;
+        private StarterKitSave kits;
 	private final Logger logger = PluginLoggerFactory.getLogger(StarterKit.class);
 
 	public StarterKit() {
@@ -56,6 +57,10 @@ public class StarterKit extends JavaPlugin {
 	public StarterKitConfiguration getStarterKitConfiguration() {
 		return this.configuration;
 	}
+        
+	public StarterKitSave getStarterKitSave() {
+		return this.kits;
+	}
 
 	public String getVersion() {
 		return this.getDescription().getVersion();
@@ -65,6 +70,7 @@ public class StarterKit extends JavaPlugin {
 	public void onEnable() {
 		try {
 			this.loadConfiguration();
+                        this.loadKits();
 			this.registerCommands();
 			this.registerListeners();
 			this.setupMetrics();
@@ -89,13 +95,20 @@ public class StarterKit extends JavaPlugin {
 		this.configuration = new StarterKitConfiguration(file, defaults);
 		this.logger.setLevel(configuration.getLogLevel());
 	}
+        
+	private void loadKits()
+	throws IOException {
+		final File file = new File(this.getDataFolder().getAbsolutePath() + File.separatorChar + "kits.yml");
+		final InputStream defaults = this.getResource("kits.yml");
+		this.kits = new StarterKitSave(file, defaults);
+	}
 
 	protected void registerCommands() {
 		// create the commands
 		Set<Command> commands = new HashSet<Command>();
-		commands.add(new ListCommand(this.configuration));
-		commands.add(new LoadCommand(this.configuration, this.getServer()));
-		commands.add(new SaveCommand(this.configuration));
+		commands.add(new ListCommand(this.kits));
+		commands.add(new LoadCommand(this.kits, this.getServer()));
+		commands.add(new SaveCommand(this.kits));
 		// create the invoker
 		HelpCommand command = new HelpCommand("sk", commands);
 		CommandInvoker invoker = new FallthroughCommandInvoker(command);
@@ -104,7 +117,7 @@ public class StarterKit extends JavaPlugin {
 	}
 
 	protected void registerListeners() {
-		new PlayerListener(this, this.getServer().getPluginManager(), this.configuration);
+		new PlayerListener(this, this.getServer().getPluginManager(), this.configuration, this.kits);
 	}
 
 	protected void setupMetrics()

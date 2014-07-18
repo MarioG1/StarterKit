@@ -48,10 +48,10 @@ public class PlayerListener extends AbstractListener {
 	/** Setting to decide if we are granting starter kits on death */
 	private final boolean kitOnDeath;
 
-	public PlayerListener(final StarterKit plugin, PluginManager pluginManager, StarterKitConfiguration configuration) {
+	public PlayerListener(final StarterKit plugin, PluginManager pluginManager, StarterKitConfiguration configuration, StarterKitSave kits) {
 		super(plugin, pluginManager);
-		this.inventory = configuration.getInventoryKit();
-		this.armour = configuration.getArmourKit();
+		this.inventory = kits.getInventoryKit();
+		this.armour = kits.getArmourKit();
 		this.kitOnDeath = configuration.isProvidingKitOnDeath();
 	}
 
