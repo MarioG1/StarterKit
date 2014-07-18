@@ -20,6 +20,7 @@ package name.richardson.james.bukkit.starterkit.management;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
+import org.bukkit.Bukkit;
 
 import name.richardson.james.bukkit.utilities.command.AbstractCommand;
 import name.richardson.james.bukkit.utilities.command.context.CommandContext;
@@ -40,6 +41,8 @@ public class ListCommand extends AbstractCommand {
 	private static final String BACKPACK_LIST_KEY = "backpack-list";
 	private static final String HEADER_KEY = "header";
 	private static final String NO_PERMISSION_KEY = "no-permission";
+        private static final String TOO_MANY_ARGUMENTS_KEY = "too-many-argument";
+        private static final String WORLD_NOT_FOUND = "world-not-found";
 
 	private final StarterKitSave kits;
 	private final ChoiceFormatter choiceFormatter = new ItemCountChoiceFormatter();
@@ -60,14 +63,24 @@ public class ListCommand extends AbstractCommand {
 	@Override
 	public void execute(CommandContext commandContext) {
 		if (isAuthorised(commandContext.getCommandSender())) {
-			this.choiceFormatter.setArguments(kits.getItemCount());
+                if(commandContext.has(0))
+                {
+                    if (Bukkit.getWorld(commandContext.getJoinedArguments(0)) != null)
+                    {
+			this.choiceFormatter.setArguments(kits.getItemCount(Bukkit.getWorld(commandContext.getJoinedArguments(0))));
 			commandContext.getCommandSender().sendMessage(this.choiceFormatter.getMessage());
-			if (this.kits.getArmourKit().getItemCount() != 0) {
-				commandContext.getCommandSender().sendMessage(ChatColor.YELLOW + localisation.getMessage(ARMOUR_LIST_KEY, this.buildKitList(this.kits.getArmourKit().getContents())));
+			if (this.kits.getArmourKit(Bukkit.getWorld(commandContext.getJoinedArguments(0))).getItemCount() != 0) {
+				commandContext.getCommandSender().sendMessage(ChatColor.YELLOW + localisation.getMessage(ARMOUR_LIST_KEY, this.buildKitList(this.kits.getArmourKit(Bukkit.getWorld(commandContext.getJoinedArguments(0))).getContents())));
 			}
-			if (this.kits.getInventoryKit().getItemCount() != 0) {
-				commandContext.getCommandSender().sendMessage(ChatColor.YELLOW + localisation.getMessage(BACKPACK_LIST_KEY, this.buildKitList(this.kits.getInventoryKit().getContents())));
+			if (this.kits.getInventoryKit(Bukkit.getWorld(commandContext.getJoinedArguments(0))).getItemCount() != 0) {
+				commandContext.getCommandSender().sendMessage(ChatColor.YELLOW + localisation.getMessage(BACKPACK_LIST_KEY, this.buildKitList(this.kits.getInventoryKit(Bukkit.getWorld(commandContext.getJoinedArguments(0))).getContents())));
 			}
+                    } else {
+                        commandContext.getCommandSender().sendMessage(colourFormatter.format(localisation.getMessage(WORLD_NOT_FOUND), ColourFormatter.FormatStyle.ERROR));
+                    }
+                } else {
+                    commandContext.getCommandSender().sendMessage(colourFormatter.format(localisation.getMessage(TOO_MANY_ARGUMENTS_KEY), ColourFormatter.FormatStyle.ERROR));
+                }
 		} else {
 			commandContext.getCommandSender().sendMessage(colourFormatter.format(localisation.getMessage(NO_PERMISSION_KEY), ColourFormatter.FormatStyle.ERROR));
 		}

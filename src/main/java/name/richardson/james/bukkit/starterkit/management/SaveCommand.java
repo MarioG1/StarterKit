@@ -18,12 +18,11 @@
 package name.richardson.james.bukkit.starterkit.management;
 
 import java.io.IOException;
-import java.util.List;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.Permissible;
+import org.bukkit.Bukkit;
 
 import name.richardson.james.bukkit.utilities.command.AbstractCommand;
 import name.richardson.james.bukkit.utilities.command.context.CommandContext;
@@ -32,7 +31,6 @@ import name.richardson.james.bukkit.utilities.formatters.DefaultColourFormatter;
 import name.richardson.james.bukkit.utilities.localisation.Localisation;
 import name.richardson.james.bukkit.utilities.localisation.ResourceBundleByClassLocalisation;
 
-import name.richardson.james.bukkit.starterkit.StarterKitConfiguration;
 import name.richardson.james.bukkit.starterkit.StarterKitSave;
 
 public class SaveCommand extends AbstractCommand {
@@ -43,6 +41,8 @@ public class SaveCommand extends AbstractCommand {
 	private static final String KIT_SAVED_KEY = "kit-saved";
 	private static final String UNABLE_TO_SAVE_KEY = "unable-to-save-kit";
 	private static final String NO_PERMISSION_KEY = "no-permission";
+        private static final String TOO_MANY_ARGUMENTS_KEY = "too-many-argument";
+        private static final String WORLD_NOT_FOUND = "world-not-found";
 
 	private final ColourFormatter colourFormatter = new DefaultColourFormatter();
 	private final StarterKitSave kits;
@@ -69,9 +69,19 @@ public class SaveCommand extends AbstractCommand {
 			} else {
 				try {
 					final Player player = (Player) commandContext.getCommandSender();
-					this.inventory = player.getInventory();
-					this.kits.setInventory(this.inventory);
-					player.sendMessage(colourFormatter.format(localisation.getMessage(KIT_SAVED_KEY), ColourFormatter.FormatStyle.INFO));
+                                        if(commandContext.has(0))
+                                        {
+                                            if (Bukkit.getWorld(commandContext.getJoinedArguments(0)) != null)
+                                            {
+                                                this.inventory = player.getInventory();
+                                                this.kits.setInventory(this.inventory, Bukkit.getWorld(commandContext.getJoinedArguments(0)));
+                                                player.sendMessage(colourFormatter.format(localisation.getMessage(KIT_SAVED_KEY), ColourFormatter.FormatStyle.INFO));
+                                            } else {
+                                                commandContext.getCommandSender().sendMessage(colourFormatter.format(localisation.getMessage(WORLD_NOT_FOUND), ColourFormatter.FormatStyle.ERROR));
+                                            }
+                                        } else {
+                                            commandContext.getCommandSender().sendMessage(colourFormatter.format(localisation.getMessage(TOO_MANY_ARGUMENTS_KEY), ColourFormatter.FormatStyle.ERROR));
+                                        }
 				} catch (final IOException e) {
 					commandContext.getCommandSender().sendMessage(colourFormatter.format(localisation.getMessage(UNABLE_TO_SAVE_KEY), ColourFormatter.FormatStyle.ERROR));
 				}

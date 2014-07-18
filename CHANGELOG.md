@@ -1,5 +1,6 @@
 # Changelog for StarterKit (v1.3.7-SNAPSHOT)
 
+2014-07-18 20:26:15 +0200    Split kit saves and config into two seperate files (MarioG1)  
 2013-12-15 10:57:17 +0100    prepare for release (James Richardson)  
 2013-12-14 16:05:04 +0100    add ability to give kit to specific players (James Richardson)  
 

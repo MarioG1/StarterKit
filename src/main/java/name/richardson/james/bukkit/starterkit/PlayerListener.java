@@ -32,26 +32,20 @@ import org.bukkit.plugin.PluginManager;
 import name.richardson.james.bukkit.utilities.listener.AbstractListener;
 import name.richardson.james.bukkit.utilities.logging.PluginLoggerFactory;
 
-import name.richardson.james.bukkit.starterkit.kit.ArmourKit;
-import name.richardson.james.bukkit.starterkit.kit.InventoryKit;
 
 public class PlayerListener extends AbstractListener {
 
 	private final Logger logger = PluginLoggerFactory.getLogger(PlayerListener.class);
 
 	/** The inventory to grant new players. */
-	private final InventoryKit inventory;
-
-	/** The armour to grant new players. */
-	private final ArmourKit armour;
+	private final StarterKitSave kits;
 
 	/** Setting to decide if we are granting starter kits on death */
 	private final boolean kitOnDeath;
 
 	public PlayerListener(final StarterKit plugin, PluginManager pluginManager, StarterKitConfiguration configuration, StarterKitSave kits) {
 		super(plugin, pluginManager);
-		this.inventory = kits.getInventoryKit();
-		this.armour = kits.getArmourKit();
+		this.kits = kits;
 		this.kitOnDeath = configuration.isProvidingKitOnDeath();
 	}
 
@@ -93,8 +87,8 @@ public class PlayerListener extends AbstractListener {
 		logger.log(Level.FINE, "Granting kit: {0}", player.getName());
 		final PlayerInventory inventory = player.getInventory();
 		inventory.clear();
-		inventory.setArmorContents(this.armour.getContents());
-		inventory.setContents(this.inventory.getContents());
+		inventory.setArmorContents(kits.getArmourKit(player.getWorld()).getContents());
+		inventory.setContents(kits.getInventoryKit(player.getWorld()).getContents());
 		final StarterKitGrantedEvent event = new StarterKitGrantedEvent(player.getName(), inventory);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}

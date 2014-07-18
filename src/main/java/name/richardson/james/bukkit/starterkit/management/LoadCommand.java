@@ -22,6 +22,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
+import org.bukkit.Bukkit;
 
 import name.richardson.james.bukkit.utilities.command.AbstractCommand;
 import name.richardson.james.bukkit.utilities.command.context.CommandContext;
@@ -42,6 +43,8 @@ public class LoadCommand extends AbstractCommand {
 	private static final String KIT_LOADED = "kit-loaded";
 	private static final String NO_PERMISSION_KEY = "no-permission";
 	private static final String MUST_SPECIFY_PLAYER = "must-specify-player";
+        private static final String TOO_MANY_ARGUMENTS_KEY = "too-many-argument";
+        private static final String WORLD_NOT_FOUND = "world-not-found";
 
 	private final StarterKitSave kits;
 	private final Server server;
@@ -65,11 +68,21 @@ public class LoadCommand extends AbstractCommand {
 	public void execute(CommandContext context) {
 		if (!setPlayer(context)) return;
 		if (!hasPermission(context.getCommandSender())) return;
-		final ItemStack[] inventory = this.kits.getInventoryKit().getContents();
-		final ItemStack[] armour = this.kits.getArmourKit().getContents();
-		player.getInventory().setContents(inventory);
-		player.getInventory().setArmorContents(armour);
-		player.sendMessage(colourFormatter.format(localisation.getMessage(KIT_LOADED), ColourFormatter.FormatStyle.INFO));
+                if(context.has(0))
+                {
+                    if (Bukkit.getWorld(context.getJoinedArguments(0)) != null)
+                    {
+                        final ItemStack[] inventory = this.kits.getInventoryKit(Bukkit.getWorld(context.getJoinedArguments(0))).getContents();
+                        final ItemStack[] armour = this.kits.getArmourKit(Bukkit.getWorld(context.getJoinedArguments(0))).getContents();
+                        player.getInventory().setContents(inventory);
+                        player.getInventory().setArmorContents(armour);
+                        player.sendMessage(colourFormatter.format(localisation.getMessage(KIT_LOADED), ColourFormatter.FormatStyle.INFO));
+                    } else {
+                        context.getCommandSender().sendMessage(colourFormatter.format(localisation.getMessage(WORLD_NOT_FOUND), ColourFormatter.FormatStyle.ERROR));
+                    }
+                } else {
+                    context.getCommandSender().sendMessage(colourFormatter.format(localisation.getMessage(TOO_MANY_ARGUMENTS_KEY), ColourFormatter.FormatStyle.ERROR));
+                }
 	}
 
 	private boolean hasPermission(CommandSender sender) {
@@ -82,12 +95,12 @@ public class LoadCommand extends AbstractCommand {
 
 	private boolean setPlayer(CommandContext context) {
 		player = null;
-		if (!context.has(0)) {
+		if (!context.has(1)) {
 			if ((context.getCommandSender() instanceof Player)) {
 				player = (Player) context.getCommandSender();
 			}
 		} else {
-			player = server.getPlayer(context.getString(0));
+			player = server.getPlayer(context.getString(2));
 		}
 		if (player == null) {
 			context.getCommandSender().sendMessage(colourFormatter.format(localisation.getMessage(MUST_SPECIFY_PLAYER), ColourFormatter.FormatStyle.ERROR));
