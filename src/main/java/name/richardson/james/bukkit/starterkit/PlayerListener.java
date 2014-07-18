@@ -44,12 +44,14 @@ public class PlayerListener extends AbstractListener {
 	/** Setting to decide if we are granting starter kits on death */
 	private final boolean kitOnDeath;
         private final boolean kitOnWorldChange;
+        private final boolean kitOnEveryJoin;
 
 	public PlayerListener(final StarterKit plugin, PluginManager pluginManager, StarterKitConfiguration configuration, StarterKitSave kits) {
 		super(plugin, pluginManager);
 		this.kits = kits;
 		this.kitOnDeath = configuration.isProvidingKitOnDeath();
                 this.kitOnWorldChange = configuration.isProvidingKitOnWorldChange();
+                this.kitOnEveryJoin = configuration.isProvidingKitOnEveryJoin();
 	}
 
 	/**
@@ -63,7 +65,7 @@ public class PlayerListener extends AbstractListener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerJoin(final PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
-		if (!player.hasPlayedBefore()) {
+		if (!player.hasPlayedBefore() || kitOnEveryJoin) {
 			this.giveKit(player);
 		}
 	}

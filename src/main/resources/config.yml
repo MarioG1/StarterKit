@@ -28,9 +28,14 @@
 # -- This value specifies if we should give a kit to someone every time they chnage the world
 # -- Valid values: true or false
 # -- Default: false
+# - provide-kit-on-every-join:
+# -- This value specifies if we should give a kit to someone every time he joines
+# -- Valid values: true or false
+# -- Default: false
 logging: INFO
 send-anonymous-statistics: true
 provide-kit-on-death: false
+provide-kit-on-every-join: false
 provide-kit-on-world-change: false
 automatic-updates:
   method: NOTIFY

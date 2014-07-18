@@ -36,5 +36,9 @@ public class StarterKitConfiguration extends SimplePluginConfiguration {
 	public boolean isProvidingKitOnWorldChange() {
 		return this.getConfiguration().getBoolean("provide-kit-on-world-change");
 	}
+        
+	public boolean isProvidingKitOnEveryJoin() {
+		return this.getConfiguration().getBoolean("provide-kit-on-every-join");
+	}
 
 }
