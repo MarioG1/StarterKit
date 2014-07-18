@@ -32,5 +32,9 @@ public class StarterKitConfiguration extends SimplePluginConfiguration {
 	public boolean isProvidingKitOnDeath() {
 		return this.getConfiguration().getBoolean("provide-kit-on-death");
 	}
+        
+	public boolean isProvidingKitOnWorldChange() {
+		return this.getConfiguration().getBoolean("provide-kit-on-world-change");
+	}
 
 }

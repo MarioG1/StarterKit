@@ -20,13 +20,18 @@
 # -- This value specifies if the plugin will send anonynomous staticial information to mcstats.org.
 # -- Valid values: true or false
 # -- Default: true
-# - provide-lit-on-death:
+# - provide-kit-on-death:
 # -- This value specifies if we should give a kit to someone every time they respawn
 # -- Valid values: true or false
 # -- Default: true
+# - provide-kit-on-world-change:
+# -- This value specifies if we should give a kit to someone every time they chnage the world
+# -- Valid values: true or false
+# -- Default: false
 logging: INFO
 send-anonymous-statistics: true
 provide-kit-on-death: false
+provide-kit-on-world-change: false
 automatic-updates:
   method: NOTIFY
   branch: STABLE

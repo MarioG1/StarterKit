@@ -31,6 +31,7 @@ import org.bukkit.plugin.PluginManager;
 
 import name.richardson.james.bukkit.utilities.listener.AbstractListener;
 import name.richardson.james.bukkit.utilities.logging.PluginLoggerFactory;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 
 public class PlayerListener extends AbstractListener {
@@ -42,11 +43,13 @@ public class PlayerListener extends AbstractListener {
 
 	/** Setting to decide if we are granting starter kits on death */
 	private final boolean kitOnDeath;
+        private final boolean kitOnWorldChange;
 
 	public PlayerListener(final StarterKit plugin, PluginManager pluginManager, StarterKitConfiguration configuration, StarterKitSave kits) {
 		super(plugin, pluginManager);
 		this.kits = kits;
 		this.kitOnDeath = configuration.isProvidingKitOnDeath();
+                this.kitOnWorldChange = configuration.isProvidingKitOnWorldChange();
 	}
 
 	/**
@@ -62,6 +65,21 @@ public class PlayerListener extends AbstractListener {
 		final Player player = event.getPlayer();
 		if (!player.hasPlayedBefore()) {
 			this.giveKit(player);
+		}
+	}
+        
+        /**
+	 * Called when a player janes between worlds.
+	 * 
+	 * Checks to see if the player has played here before.
+	 * 
+	 * @param event
+	 *          PlayerJoinEvent
+	 */
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void PlayerChangedWorldEvent(final PlayerChangedWorldEvent event) {
+		if (this.kitOnWorldChange) {
+			this.giveKit(event.getPlayer());
 		}
 	}
 
