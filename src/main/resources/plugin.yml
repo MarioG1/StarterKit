@@ -4,6 +4,8 @@ author: grandwazir
 description: Give items to new players.
 website: https://grandwazir.github.com/StarterKit
 version: ${project.version}
+load: POSTWORLD
+depend: [Multiverse-Core]
 commands:
   sk:
     description: 'StarterKit root command'
